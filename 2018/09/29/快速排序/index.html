@@ -17,7 +17,7 @@
 <meta property="og:description" content="基本思想：通过一趟排序将要排序的数据分成独立的两部分，其中一部分数据比另一部分所有的数据都小，然后在通过递归对这两部分数据分别进行排序，以此将整个数据变成有序。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://blogimage.xp-zhao.cn/blog/181018/cdj3BjK0gD.png">
-<meta property="og:updated_time" content="2019-04-22T08:35:54.932Z">
+<meta property="og:updated_time" content="2019-05-14T03:52:38.167Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="快速排序">
 <meta name="twitter:description" content="基本思想：通过一趟排序将要排序的数据分成独立的两部分，其中一部分数据比另一部分所有的数据都小，然后在通过递归对这两部分数据分别进行排序，以此将整个数据变成有序。">
@@ -192,7 +192,7 @@
 <p>步骤：<br>​      1. 从要排序的数据中选择一个数作为 “基准” (pivot)<br>​      2. 重新排序数据，所有比基准小的数据放在基准的前面，比基准大的数据放在基准后面，排序结束之后基准处于数列的中间。<br>​      3. 递归的将小于基准的子数列和大于基准的子数列进行排序’</p>
 <p><strong>图示：</strong><br><img src="http://blogimage.xp-zhao.cn/blog/181018/cdj3BjK0gD.png" alt="mark"></p>
 <p><strong>代码：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuickSort</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[] arr = &#123;<span class="number">5</span> , <span class="number">3</span> ,<span class="number">1</span>, <span class="number">7</span> , <span class="number">4</span> , <span class="number">9</span> , <span class="number">2</span>&#125;;</span><br><span class="line">		sort(arr,<span class="number">0</span>,arr.length - <span class="number">1</span>);</span><br><span class="line">		System.out.println(Arrays.toString(arr));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(left &lt; right)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">int</span> mark = position(arr,left,right);</span><br><span class="line">			sort(arr,left,mark - <span class="number">1</span>);</span><br><span class="line">			sort(arr,mark + <span class="number">1</span>,right);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">position</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">int</span> mark = arr[left]; <span class="comment">// 选择第一个数为基准（基于这个数，将数组分为两部分，较小的在左边，较大的在右边）</span></span><br><span class="line">		<span class="keyword">while</span>(left &lt; right)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">while</span>(left &lt; right &amp;&amp; arr[right] &gt;= mark)</span><br><span class="line">			&#123;</span><br><span class="line">				right--;</span><br><span class="line">			&#125;</span><br><span class="line">			arr[left] = arr[right]; <span class="comment">// 将小于基准值的数移到左边</span></span><br><span class="line">			<span class="keyword">while</span>(left &lt; right &amp;&amp; arr[left] &lt;= mark)</span><br><span class="line">			&#123;</span><br><span class="line">				left++;</span><br><span class="line">			&#125;</span><br><span class="line">			arr[right] = arr[left]; <span class="comment">// 将大于基准值的数移到右边</span></span><br><span class="line">		&#125;</span><br><span class="line">		arr[left] = mark;</span><br><span class="line">		<span class="keyword">return</span> left;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuickSort</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[] arr = &#123;<span class="number">5</span> , <span class="number">3</span> ,<span class="number">1</span>, <span class="number">7</span> , <span class="number">4</span> , <span class="number">9</span> , <span class="number">2</span>&#125;;</span><br><span class="line">		sort(arr,<span class="number">0</span>,arr.length - <span class="number">1</span>);</span><br><span class="line">		System.out.println(Arrays.toString(arr));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(left &lt; right)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">int</span> mark = position(arr,left,right);</span><br><span class="line">			sort(arr,left,mark - <span class="number">1</span>);</span><br><span class="line">			sort(arr,mark + <span class="number">1</span>,right);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 原地分区函数一</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">position</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">int</span> mark = arr[left]; <span class="comment">// 选择第一个数为基准（基于这个数，将数组分为两部分，较小的在左边，较大的在右边）</span></span><br><span class="line">		<span class="keyword">while</span>(left &lt; right)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">while</span>(left &lt; right &amp;&amp; arr[right] &gt;= mark)</span><br><span class="line">			&#123;</span><br><span class="line">				right--;</span><br><span class="line">			&#125;</span><br><span class="line">			arr[left] = arr[right]; <span class="comment">// 将小于基准值的数移到左边</span></span><br><span class="line">			<span class="keyword">while</span>(left &lt; right &amp;&amp; arr[left] &lt;= mark)</span><br><span class="line">			&#123;</span><br><span class="line">				left++;</span><br><span class="line">			&#125;</span><br><span class="line">			arr[right] = arr[left]; <span class="comment">// 将大于基准值的数移到右边</span></span><br><span class="line">		&#125;</span><br><span class="line">		arr[left] = mark;</span><br><span class="line">		<span class="keyword">return</span> left;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 原地分区函数二</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">partition</span><span class="params">(<span class="keyword">int</span>[] array, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> pivot = array[right];</span><br><span class="line">        <span class="keyword">int</span> index = left;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = left; j &lt;= right - <span class="number">1</span>; j++) &#123;</span><br><span class="line">          <span class="keyword">if</span> (array[j] &lt; pivot) &#123;</span><br><span class="line">            swap(array, index, j);</span><br><span class="line">            index++;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        swap(array, index, right);</span><br><span class="line">        <span class="keyword">return</span> index;</span><br><span class="line">  	&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span>[] array, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> tmp = array[i];</span><br><span class="line">        array[i] = array[j];</span><br><span class="line">        array[j] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
 
@@ -461,7 +461,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">并发</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -469,11 +473,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" class="js-tag color3">并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">java基础</a>
+                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -485,7 +489,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
+                <a href="javascript:void(0)" class="js-tag color3">框架</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -493,11 +497,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">框架</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -505,23 +505,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -537,15 +529,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">软件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -557,7 +545,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">软件</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">链表</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -565,7 +561,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">链表</a>
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
              
               <li class="article-tag-list-item">
