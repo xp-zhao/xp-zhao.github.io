@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="小平的个人博客">
 <meta property="og:description" content="记录 es 的一些知识点，后期逐渐丰富">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-22T08:35:54.922Z">
+<meta property="og:updated_time" content="2019-07-01T10:29:41.619Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Elasticsearch学习笔记">
 <meta name="twitter:description" content="记录 es 的一些知识点，后期逐渐丰富">
@@ -187,8 +187,183 @@
       
         <p>记录 es 的一些知识点，后期逐渐丰富</p>
 <a id="more"></a>
-<p>Elasticsearch 简称为 es，是一个高扩展、开源的全文检索和分析引擎，可以准实时的快速存储、搜索、分析海量的数据。</p>
+<p>Elasticsearch 简称为 es，是一个基于 Lucene 构建的高扩展、开源的全文搜索和分析引擎，可以准实时的快速存储、搜索、分析海量的数据。同时 es 还是一个分布式的文档数据库，其中每个字段都是被索引的数据，可以被搜索。</p>
+<blockquote>
+<p>全文搜索：计算机搜索程序通过扫描文章中的每一个词，对每一个词建立一个索引，指明该词在文章中出现的次数和位置，当用户查询时，搜索程序就根据事先建立好的索引进行查找，并将查找的结果反馈给用户。</p>
+</blockquote>
 <h1 id="一、索引"><a href="#一、索引" class="headerlink" title="一、索引"></a>一、索引</h1><p>正向索引：通过文档去查询单词<br>倒排索引：通过单词去查询文档（将单词作为 hash 表的 key，单词所在的文本位置作为 hash 表的 value 保存，查询某个单词的位置时，只需要根据 hash 表就可以迅速的找到目标文档）</p>
+<p>假设有两篇文档：<br>文档1：Tom lives in Guangzhou,I live in Guangzhou too.<br>文档2：He once lived in Shanghai.<br>将这两篇文档中的单词都抽取出来，并且记录下这些单词出现在哪个文档中，就能形成一个简单粗糙的倒排索引</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">关键词</th>
+<th style="text-align:center">所在文档编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Tom</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">lives</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">in</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">Guangzhou</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">I</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">live</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">in</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">Guangzhou</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">too</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">He</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">once</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">lived</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">in</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">Shanghai</td>
+<td style="text-align:center">2</td>
+</tr>
+</tbody>
+</table>
+<p>将关键字抽取处理的过程就是分词的过程。由于英文单词本身就是由空格分隔，所以比较好处理。但中文单词间是连在一起的，需要进行特殊的分词处理（使用单独的分词器）。</p>
+<p>针对上面的倒排索引，可以进行部分优化：</p>
+<ol>
+<li>文档中的 ‘in’、’once’、’too’ 等单词没有什么实际意义，中文中的 “是”、”的” 等字通常也没有具体含义，这些词对搜索来说没有意义，可以直接过滤掉</li>
+<li>用户搜索时虽然输入了 ‘live’，但是也希望搜索出 ‘lives’ 和 ‘lived’ 来，所以需要把复数单词，过去式单词等做还原</li>
+<li>用户搜索时虽然输入了 ‘He’，但是也希望搜索出 ‘he’ 和 ‘HE’ 来，所以所有单词需要统一大小写</li>
+</ol>
+<p>经过上面的优化，文档中的关键字如下：<br>文档1：[tom] [live]  [guangzhou] [i] [live] [guangzhou]<br>文档2：[he] [live] [shanghai].<br>对应的倒排索引如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">关键词</th>
+<th style="text-align:center">所在文档编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">tom</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">live</td>
+<td style="text-align:center">1,2</td>
+</tr>
+<tr>
+<td style="text-align:center">guangzhou</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">i</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">he</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">shanghai</td>
+<td style="text-align:center">2</td>
+</tr>
+</tbody>
+</table>
+<p>为了更好的统计，还可以记录关键词在文章中出现的次数和位置 (在优化后的文档中的位置)</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">关键词</th>
+<th style="text-align:center">文档编号[出现次数]</th>
+<th style="text-align:center">所在位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">tom</td>
+<td style="text-align:center">1[1]</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">live</td>
+<td style="text-align:center">1[2]<br>2[1]</td>
+<td style="text-align:center">2,5<br>2</td>
+</tr>
+<tr>
+<td style="text-align:center">guangzhou</td>
+<td style="text-align:center">1[2]</td>
+<td style="text-align:center">3,6</td>
+</tr>
+<tr>
+<td style="text-align:center">i</td>
+<td style="text-align:center">1[1]</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:center">he</td>
+<td style="text-align:center">2[1]</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">shanghai</td>
+<td style="text-align:center">2[1]</td>
+<td style="text-align:center">3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>在实际的倒排索引中，关键词会按照字符顺序排序，所以查询关键词时可以使用二分查找法快速查找</strong></p>
+<h1 id="二、分词器"><a href="#二、分词器" class="headerlink" title="二、分词器"></a>二、分词器</h1><p>ik 分词器下载：</p>
+<p>./bin/elasticsearch-plugin install <a href="https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.0/elasticsearch-analysis-ik-7.2.0.zip" target="_blank" rel="noopener">https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.0/elasticsearch-analysis-ik-7.2.0.zip</a></p>
+<h1 id="三、使用-Java-操作-es"><a href="#三、使用-Java-操作-es" class="headerlink" title="三、使用 Java 操作 es"></a>三、使用 Java 操作 es</h1><h1 id="四、经典应用-ELK"><a href="#四、经典应用-ELK" class="headerlink" title="四、经典应用 ELK"></a>四、经典应用 ELK</h1><h1 id="五、Tips"><a href="#五、Tips" class="headerlink" title="五、Tips"></a>五、Tips</h1><ol>
+<li><p>启动 es 时，不能以 root 账号启动</p>
+<blockquote>
+<p>groupadd elsearch # 创建用户组</p>
+<p>useradd elsearch -g elsearch -p elasticsearch # 创建用户并指定默认密码</p>
+<p>chown -R elsearch:elsearch elasticsearch-7.2.0 # 为用户指定权限</p>
+</blockquote>
+</li>
+<li><p>后台启动 es 进程</p>
+<blockquote>
+<p>./bin/elasticsearch -d</p>
+</blockquote>
+</li>
+<li><p><a href="https://github.com/spujadas/elk-docker/issues/92" target="_blank" rel="noopener">报错</a>“max virtual memory areas vm.max<em>map</em>count [65530] is too low”</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="comment"># 运行命令</span></span><br><span class="line">&gt;sudo sysctl -w vm.max_map_count=262144</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+</ol>
 
       
 
@@ -331,7 +506,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、索引"><span class="toc-number">1.</span> <span class="toc-text">一、索引</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、索引"><span class="toc-number">1.</span> <span class="toc-text">一、索引</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、分词器"><span class="toc-number">2.</span> <span class="toc-text">二、分词器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、使用-Java-操作-es"><span class="toc-number">3.</span> <span class="toc-text">三、使用 Java 操作 es</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四、经典应用-ELK"><span class="toc-number">4.</span> <span class="toc-text">四、经典应用 ELK</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#五、Tips"><span class="toc-number">5.</span> <span class="toc-text">五、Tips</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -453,7 +628,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">java基础</a>
+                <a href="javascript:void(0)" class="js-tag color3">es</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">并发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -465,27 +648,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
+                <a href="javascript:void(0)" class="js-tag color2">java基础</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">es</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">并发</a>
+                <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -493,7 +664,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
+                <a href="javascript:void(0)" class="js-tag color3">面试</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -505,27 +680,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">kafka</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -533,11 +688,27 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">kafka</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -549,7 +720,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">软件</a>
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -557,11 +732,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">软件</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
