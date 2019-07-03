@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="小平的个人博客">
 <meta property="og:description" content="记录 es 的一些知识点，后期逐渐丰富">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-02T07:58:58.331Z">
+<meta property="og:updated_time" content="2019-07-03T09:45:55.681Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Elasticsearch学习笔记">
 <meta name="twitter:description" content="记录 es 的一些知识点，后期逐渐丰富">
@@ -348,10 +348,21 @@
 <h2 id="2-文档（document）"><a href="#2-文档（document）" class="headerlink" title="2. 文档（document）"></a>2. 文档（document）</h2><p>Elasticsearch 是面向文档的，在 Elasticsearch 中以一个 JSON 格式的字符串来表示一个文档。每个存储在索引中的文档都有一个类型和一个 id。原始的文档会存储在 <code>_source</code> 字段中。</p>
 <h2 id="3-字段（field）"><a href="#3-字段（field）" class="headerlink" title="3. 字段（field）"></a>3. 字段（field）</h2><p>文档中包含零个或者多个字段，字段可以是一个简单的值（字符串、整数、日期等），也可以是一个数组或者对象的嵌套结构，<strong>文档中的字段都会被索引（拥有一个倒排索引）</strong>，只有这样才能被搜索。</p>
 <h2 id="3-索引（index）"><a href="#3-索引（index）" class="headerlink" title="3. 索引（index）"></a>3. 索引（index）</h2><p>索引是具有相同结构的文档的集合。</p>
+<blockquote>
+<p>索引名称必须全部小写，不能以下划线开头，不能包含逗号</p>
+</blockquote>
 <h2 id="4-类型（type"><a href="#4-类型（type" class="headerlink" title="4.类型（type)"></a>4.类型（type)</h2><p>在索引中，可以定义一个或者多个类型，类型是索引的逻辑分区。文档属于一种类型，这些类型存储在索引中。<strong>（在 Elasticsearch7.x 中，）</strong></p>
 <blockquote>
 <p>关系型数据库：Database -&gt; Table -&gt; Row -&gt; Column<br>Elasticsearch: Index -&gt; Type -&gt; Document -&gt; Field</p>
 </blockquote>
+<h2 id="三、分布式"><a href="#三、分布式" class="headerlink" title="三、分布式"></a>三、分布式</h2><p>Elasticsearch 在分布式概率上做了很大程度的透明化。为了隐藏分布式系统的复杂性，以下操作都是在底层自动完成的：</p>
+<ul>
+<li>将文档分区到不同的分片中，它们可以存在于一个或者多个节点</li>
+<li>将分片均匀分布到各个节点，对索引和搜索做负载均衡</li>
+<li>冗余每一个分片，防止硬件故障造成的数据丢失</li>
+<li>将集群中任意一个节点上的请求路由到相应数据所在的节点</li>
+<li>无论是增加节点，还是移除节点，分片都可以做到无缝的拓展和迁移</li>
+</ul>
 <h1 id="二、分词器"><a href="#二、分词器" class="headerlink" title="二、分词器"></a>二、分词器</h1><p>ik 分词器下载：</p>
 <p>./bin/elasticsearch-plugin install <a href="https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.0/elasticsearch-analysis-ik-7.2.0.zip" target="_blank" rel="noopener">https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.0/elasticsearch-analysis-ik-7.2.0.zip</a></p>
 <h1 id="三、使用-Java-操作-es"><a href="#三、使用-Java-操作-es" class="headerlink" title="三、使用 Java 操作 es"></a>三、使用 Java 操作 es</h1><h1 id="四、经典应用-ELK"><a href="#四、经典应用-ELK" class="headerlink" title="四、经典应用 ELK"></a>四、经典应用 ELK</h1><h1 id="五、Tips"><a href="#五、Tips" class="headerlink" title="五、Tips"></a>五、Tips</h1><ol>
@@ -514,7 +525,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、索引"><span class="toc-number">1.</span> <span class="toc-text">一、索引</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、部分术语介绍"><span class="toc-number">2.</span> <span class="toc-text">二、部分术语介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-节点和集群"><span class="toc-number">2.1.</span> <span class="toc-text">1. 节点和集群</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-文档（document）"><span class="toc-number">2.2.</span> <span class="toc-text">2. 文档（document）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-字段（field）"><span class="toc-number">2.3.</span> <span class="toc-text">3. 字段（field）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-索引（index）"><span class="toc-number">2.4.</span> <span class="toc-text">3. 索引（index）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-类型（type"><span class="toc-number">2.5.</span> <span class="toc-text">4.类型（type)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、分词器"><span class="toc-number">3.</span> <span class="toc-text">二、分词器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、使用-Java-操作-es"><span class="toc-number">4.</span> <span class="toc-text">三、使用 Java 操作 es</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四、经典应用-ELK"><span class="toc-number">5.</span> <span class="toc-text">四、经典应用 ELK</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#五、Tips"><span class="toc-number">6.</span> <span class="toc-text">五、Tips</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、索引"><span class="toc-number">1.</span> <span class="toc-text">一、索引</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、部分术语介绍"><span class="toc-number">2.</span> <span class="toc-text">二、部分术语介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-节点和集群"><span class="toc-number">2.1.</span> <span class="toc-text">1. 节点和集群</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-文档（document）"><span class="toc-number">2.2.</span> <span class="toc-text">2. 文档（document）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-字段（field）"><span class="toc-number">2.3.</span> <span class="toc-text">3. 字段（field）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-索引（index）"><span class="toc-number">2.4.</span> <span class="toc-text">3. 索引（index）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-类型（type"><span class="toc-number">2.5.</span> <span class="toc-text">4.类型（type)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、分布式"><span class="toc-number">2.6.</span> <span class="toc-text">三、分布式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、分词器"><span class="toc-number">3.</span> <span class="toc-text">二、分词器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、使用-Java-操作-es"><span class="toc-number">4.</span> <span class="toc-text">三、使用 Java 操作 es</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四、经典应用-ELK"><span class="toc-number">5.</span> <span class="toc-text">四、经典应用 ELK</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#五、Tips"><span class="toc-number">6.</span> <span class="toc-text">五、Tips</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -636,11 +647,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">并发</a>
+                <a href="javascript:void(0)" class="js-tag color3">es</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">es</a>
+                <a href="javascript:void(0)" class="js-tag color3">并发</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -649,14 +660,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">java基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">SpringCloud</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -672,6 +675,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">框架</a>
               </li>
              
@@ -680,11 +687,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
+                <a href="javascript:void(0)" class="js-tag color2">SpringCloud</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -696,11 +707,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
+                <a href="javascript:void(0)" class="js-tag color1">kafka</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">kafka</a>
+                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -712,11 +723,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -724,11 +735,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
+                <a href="javascript:void(0)" class="js-tag color3">软件</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">软件</a>
+                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -740,11 +751,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
               </li>
              
               <li class="article-tag-list-item">
