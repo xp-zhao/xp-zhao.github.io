@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="小平的个人博客">
 <meta property="og:description" content="记录 es 的一些知识点，后期逐渐丰富">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-03T09:45:55.681Z">
+<meta property="og:updated_time" content="2019-07-05T10:00:11.538Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Elasticsearch学习笔记">
 <meta name="twitter:description" content="记录 es 的一些知识点，后期逐渐丰富">
@@ -191,6 +191,7 @@
 <blockquote>
 <p>全文搜索：计算机搜索程序通过扫描文章中的每一个词，对每一个词建立一个索引，指明该词在文章中出现的次数和位置，当用户查询时，搜索程序就根据事先建立好的索引进行查找，并将查找的结果反馈给用户。</p>
 </blockquote>
+<p><strong>安装过程比较简单，网上教程也很多，此处不多赘述，本文所用的版本为（6.8.1）</strong></p>
 <h1 id="一、索引"><a href="#一、索引" class="headerlink" title="一、索引"></a>一、索引</h1><p>正向索引：通过文档去查询单词<br>倒排索引：通过单词去查询文档（将单词作为 hash 表的 key，单词所在的文本位置作为 hash 表的 value 保存，查询某个单词的位置时，只需要根据 hash 表就可以迅速的找到目标文档）</p>
 <p>假设有两篇文档：<br>文档1：Tom lives in Guangzhou,I live in Guangzhou too.<br>文档2：He once lived in Shanghai.<br>将这两篇文档中的单词都抽取出来，并且记录下这些单词出现在哪个文档中，就能形成一个简单粗糙的倒排索引</p>
 <table>
@@ -365,7 +366,9 @@
 </ul>
 <h1 id="二、分词器"><a href="#二、分词器" class="headerlink" title="二、分词器"></a>二、分词器</h1><p>ik 分词器下载：</p>
 <p>./bin/elasticsearch-plugin install <a href="https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.0/elasticsearch-analysis-ik-7.2.0.zip" target="_blank" rel="noopener">https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.0/elasticsearch-analysis-ik-7.2.0.zip</a></p>
-<h1 id="三、使用-Java-操作-es"><a href="#三、使用-Java-操作-es" class="headerlink" title="三、使用 Java 操作 es"></a>三、使用 Java 操作 es</h1><h1 id="四、经典应用-ELK"><a href="#四、经典应用-ELK" class="headerlink" title="四、经典应用 ELK"></a>四、经典应用 ELK</h1><h1 id="五、Tips"><a href="#五、Tips" class="headerlink" title="五、Tips"></a>五、Tips</h1><ol>
+<h1 id="三、使用-Java-操作-es"><a href="#三、使用-Java-操作-es" class="headerlink" title="三、使用 Java 操作 es"></a>三、使用 Java 操作 es</h1><p>使用 Spring Data Elasticsearch 操作 Elasticsearch，Spring Data Elasticsearch 提供了一个 POJO 中心模型，用于与 Elasticsearch 文档交互并轻松编写数据访问层。</p>
+<h1 id="四、经典应用-ELK"><a href="#四、经典应用-ELK" class="headerlink" title="四、经典应用 ELK"></a>四、经典应用 ELK</h1><p>ELK = Elasticsearch + Logstash + Kibana</p>
+<h1 id="五、Tips"><a href="#五、Tips" class="headerlink" title="五、Tips"></a>五、Tips</h1><ol>
 <li><p>启动 es 时，不能以 root 账号启动 ( Elasticsearch 可以接受用户输入的脚本并执行，出于系统安全考虑所以设置为非 root 用户权限)</p>
 <blockquote>
 <p>groupadd elsearch # 创建用户组</p>
@@ -647,10 +650,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">es</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">并发</a>
               </li>
              
@@ -675,11 +674,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
+                <a href="javascript:void(0)" class="js-tag color3">框架</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">框架</a>
+                <a href="javascript:void(0)" class="js-tag color3">es</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -687,19 +686,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">SpringCloud</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -723,15 +718,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">问题记录</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -739,11 +726,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">问题记录</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -751,11 +738,27 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">jvm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">SpringCloud</a>
               </li>
              
               <li class="article-tag-list-item">
